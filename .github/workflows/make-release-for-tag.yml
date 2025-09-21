@@ -11,6 +11,8 @@ jobs:
   create-pre-release:
     name: Create release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,4 +24,3 @@ jobs:
           draft: true
           prerelease: false
           generateReleaseNotes: true
-          token: ${{ secrets.GITHUB_TOKEN }}
