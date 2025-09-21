@@ -13,6 +13,8 @@ jobs:
   build-docker-image:
     name: Build docker image
     runs-on: ubuntu-latest
+    env:
+      DOCKER_IMAGE: madpeteguy/jenkins-docker-slave-docker
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,16 +26,16 @@ jobs:
         id: docker-metadata
         uses: docker/metadata-action@v5
         with:
-          images: madpeteguy/jenkins-docker-slave-docker
+          images: ${{ env.DOCKER_IMAGE }}
       - name: Build docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           outputs: type=docker
-          tags: madpeteguy/jenkins-docker-slave-docker:test
+          tags: ${{ env.DOCKER_IMAGE }}:test
           labels: ${{ steps.docker-metadata.outputs.labels }}
       - name: Save docker image
-        run: docker save -o docker-image.tar madpeteguy/jenkins-docker-slave-docker:test
+        run: docker save -o docker-image.tar ${{ env.DOCKER_IMAGE }}:test
       - name: Upload docker-image.tar
         uses: actions/upload-artifact@v4
         with:
@@ -45,6 +47,9 @@ jobs:
     name: Test docker image
     runs-on: ubuntu-latest
     needs: build-docker-image
+    env:
+      DOCKER_CONTAINER: jenkins-docker-agent-${{ github.run_id }}
+      DOCKER_IMAGE: madpeteguy/jenkins-docker-slave-docker
     steps:
       - name: Download docker-image.tar
         uses: actions/download-artifact@v4
@@ -52,10 +57,14 @@ jobs:
           name: docker-image
       - name: Load images
         run: docker load --input docker-image.tar
+      - name: Start container
+        run: docker run -d --rm --privileged --name ${{ env.DOCKER_CONTAINER }}  ${{ env.DOCKER_IMAGE }}:test
       - name: Test docker version
-        run: docker run --rm --privileged madpeteguy/jenkins-docker-slave-docker:test docker --version
+        run: docker exec ${{ env.DOCKER_CONTAINER }} docker --version
       - name: Test docker hello-world
-        run: docker run --rm --privileged madpeteguy/jenkins-docker-slave-docker:test docker run hello-world
+        run: docker exec ${{ env.DOCKER_CONTAINER }} docker run hello-world
+      - name: Stop container
+        run: docker stop ${{ env.DOCKER_CONTAINER }}
   cleanup-artifacts:
     name: Cleanup artifacts
     runs-on: ubuntu-latest
