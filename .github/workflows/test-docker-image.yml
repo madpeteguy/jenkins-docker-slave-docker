@@ -52,8 +52,10 @@ jobs:
           name: docker-image
       - name: Load images
         run: docker load --input docker-image.tar
-      - name: Test container up
-        run: docker run --rm madpeteguy/jenkins-docker-slave-docker:test hostname
+      - name: Test docker version
+        run: docker run --rm --privileged madpeteguy/jenkins-docker-slave-docker:test docker --version
+      - name: Test docker hello-world
+        run: docker run --rm --privileged madpeteguy/jenkins-docker-slave-docker:test docker run hello-world
   cleanup-artifacts:
     name: Cleanup artifacts
     runs-on: ubuntu-latest
