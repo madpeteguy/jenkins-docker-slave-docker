@@ -4,7 +4,7 @@ LABEL maintainer="Mad Pete Guy"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt-get remove $pkg; done
+RUN for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt-get remove $pkg || true; done
 
 RUN apt-get update && apt-get install -y \
     ca-certificates \
