@@ -3,6 +3,7 @@ FROM madpeteguy/jenkins-docker-slave-ssh:1.4.2
 LABEL maintainer="Mad Pete Guy"
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV DOCKER_TLS_CERTDIR=""
 
 RUN for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt-get remove $pkg || true; done
 

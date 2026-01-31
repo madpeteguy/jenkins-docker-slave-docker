@@ -57,8 +57,11 @@ jobs:
           name: docker-image
       - name: Load images
         run: docker load --input docker-image.tar
-      - name: Start container
-        run: docker run -d --rm --privileged --name ${{ env.DOCKER_CONTAINER }}  ${{ env.DOCKER_IMAGE }}:test
+      - name: Start container (mount host docker socket)
+        run: |
+          docker run -d --rm --name ${{ env.DOCKER_CONTAINER }} \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            ${{ env.DOCKER_IMAGE }}:test
       - name: Test docker version
         run: docker exec ${{ env.DOCKER_CONTAINER }} docker --version
       - name: Test docker hello-world
