@@ -52,7 +52,7 @@ jobs:
       DOCKER_IMAGE: madpeteguy/jenkins-docker-slave-docker
     steps:
       - name: Download docker-image.tar
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: docker-image
       - name: Load images
