@@ -37,7 +37,7 @@ jobs:
       - name: Save docker image
         run: docker save -o docker-image.tar ${{ env.DOCKER_IMAGE }}:test
       - name: Upload docker-image.tar
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: docker-image
           path: docker-image.tar
